@@ -19,6 +19,7 @@ var Engine = (function(global) {
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
      */
+    var score = 0;
     var doc = global.document,
         win = global.window,
         canvas = doc.createElement('canvas'),
@@ -53,18 +54,16 @@ var Engine = (function(global) {
          */
         lastTime = now;
 
-        /* Use the browser's requestAnimationFrame function to call this
-         * function again as soon as the browser is able to draw another frame.
-         */
         win.requestAnimationFrame(main);
     };
+
+
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
      * game loop.
      */
     function init() {
-        reset();
         lastTime = Date.now();
         main();
     }
@@ -80,6 +79,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
+        updateExtras();
         checkCollisions();
     }
 
@@ -96,6 +96,14 @@ var Engine = (function(global) {
         });
         player.update();
     }
+
+    /*This function adds in our gems*/
+     function updateExtras(){
+        gems.forEach(function(gem){
+          gem.update();
+        });
+
+     }
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -138,8 +146,8 @@ var Engine = (function(global) {
 
 
         renderEntities();
+        renderExtras();
     }
-
     /* This function is called by the render function and is called on each game
      * tick. It's purpose is to then call the render functions you have defined
      * on your enemy and player entities within app.js
@@ -155,12 +163,22 @@ var Engine = (function(global) {
         player.render();
     }
 
+    function renderExtras() {
+        /*Loop through all the objects within the gems array and call
+         * the render function
+         */
+         gems.forEach(function(gem){
+           gem.render();
+         });
+
+    }
+
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        
+      resetPlayer();
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -182,6 +200,7 @@ var Engine = (function(global) {
         'images/Gem-Blue.png',
         'images/Gem-Green.png',
         'images/Key.png',
+        'images/Rock.png',
         'images/Star.png',
         'images/Selector.png'
     ]);

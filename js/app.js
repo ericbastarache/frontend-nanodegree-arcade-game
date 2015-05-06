@@ -1,5 +1,4 @@
 // Enemies our player must avoid
-
 var Enemy = function(x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -18,43 +17,71 @@ var checkCollisions = function(){
   //First check to see if the player is within the bounds of the game
     if(player.x > 402){
       player.x = 402;
-    }
-    else if (player.x < 2){
+
+    } else if (player.x < 2){
       player.x = 2;
-    }
-    else if(player.y > 400){
+
+    } else if(player.y > 400){
       player.y = 400;
-    }
-    else if (player.y <= 0){
-      reset();
+
+    } else if (player.y <= 0){
+      player.score += 100;
+      resetPlayer();
     }
 
   //Next check to see if any enemies are colliding with our player
     for(var i = 0; i < allEnemies.length; i++){
       var enemy = allEnemies[i];
 
-      /*If the x value is less than the enemy x value + the width of the enemy minus 25px
-        And the player x value + the width of the player minus 25px  is greater than the enemy x value
-        And the player y value is less than the enemy y value + the height of the enemy minus 86px
-        And the player height minus 86px + player y value greater than enemy y value then we
-        Reset the game*/
+      /* If the player intersects with an enemy on the x or y axis (subtraction of 25px from width
+       * and 86px from used for better collision detection) then we reset the game
+       */
       if(player.x < enemy.x + (enemy.width - 25) && player.x + (player.width - 25) > enemy.x && player.y < enemy.y + (enemy.height - 86) && (player.height - 86) + player.y > enemy.y){
-        alert("Game Over");
-        reset();
+        var alertContent = "Game Over: \nFinal Score: " + player.score;
+        alert(alertContent);
+        resetPlayer();
       }
     }
+
+    //Check to see if our player collides with any gems, and if so we want to
+    //1. Update the score to reflect the number of points collected for each color gem
+    //2. Remove the gem from play
+    //Again the g variable stands for the object(s) in use, in this case gems
+    for(var g = 0; g < gems.length; g++){
+      var gem = gems[g];
+
+      if(player.x < gem.x + (gem.width - 25) && player.x + (player.width - 25) > gem.x && player.y < gem.y + (gem.height - 86) && (player.height - 86) + player.y > gem.y){
+        if(gem.sprite == 'images/Gem-Blue.png'){
+          player.score = parseInt(player.score + 20);
+          gems.splice(g, 1);
+        } else if(gem.sprite == 'images/Gem-Green.png'){
+          player.score = parseInt(player.score + 30);
+          gems.splice(g, 1);
+        } else if(gem.sprite == 'images/Gem-Orange.png'){
+          player.score = parseInt(player.score + 50);
+          gems.splice(g, 1);
+        }
+
+      }
+    }
+
 }
 
+
 //Reset the game
-var reset = function(){
+var resetPlayer = function(){
   //Resets the player location back to the starting position
     player.x = 202;
     player.y = 400;
-}
+  //Repopulates the board with gems
+    populateGems();
+};
 
+
+//Generate a random y position for the enemy
 function getRandomY(){
-  var yVals = [60, 145, 230];
-  return yVals[Math.floor(Math.random() * yVals.length)];
+    var yVals = [60, 145, 230];
+    return yVals[Math.floor(Math.random() * yVals.length)];
 }
 
 // Update the enemy's position, required method for game
@@ -64,29 +91,12 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x += this.speed * dt;
-    if(this.x > 505){
+
+    if(this.x > (505 + this.width)){
       for(var i = 0; i < allEnemies.length; i++){
         this.x -= this.speed;
-        lastY = this.y;
+        this.y = getRandomY();
 
-        //60, 145, 230
-
-        if(allEnemies[i].y == lastY){
-          allEnemies[i].y = getRandomY();
-        }
-
-        /*if(allEnemies[0].y == allEnemies[1].y || allEnemies[0].y == allEnemies[2].y){
-          allEnemies[0].y = getRandomY();
-
-        }
-        else if(allEnemies[1].y == allEnemies[0].y || allEnemies[1].y == allEnemies[2].y){
-          allEnemies[1].y = getRandomY();
-
-        }
-        else if(allEnemies[2].y == allEnemies[0].y || allEnemies[2].y == allEnemies[1].y){
-          allEnemies[2].y = getRandomY();
-
-        }*/
       }
     }
 }
@@ -96,17 +106,23 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
-var Player = function(){
-    this.x = 202;
-    this.y = 400;
+var Player = function(x, y){
+
+    this.x = x;
+    this.y = y;
+    this.score = 0;
     this.width = 101;
     this.height = 171;
     this.sprite = 'images/char-boy.png';
+
 }
 
 Player.prototype.update = function(){
+
+
     this.x = this.x;
     this.y = this.y;
+
 
 }
 
@@ -118,6 +134,7 @@ Player.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 Player.prototype.handleInput = function(keys){
+
     switch(keys){
       case 'left':
         this.x -= 100;
@@ -141,16 +158,71 @@ Player.prototype.handleInput = function(keys){
     }
 }
 
+//Gems class
+
+var Gems = function(x, y){
+    this.x = randXtraX();
+    this.y = randXtraY();
+    this.width = 101;
+    this.height = 171;
+
+    var randGem = ['images/Gem-Blue.png', 'images/Gem-Green.png', 'images/Gem-Orange.png'];
+    var gem = randGem[Math.floor(Math.random() * randGem.length)];
+
+    this.sprite = gem;
+}
+
+
+Gems.prototype.render = function(){
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Gems.prototype.update = function(){
+    this.x = this.x;
+    this.y = this.y;
+
+}
+
+var randXtraX = function(){
+    var randX = [2, 102, 202, 302, 402];
+    var gemX = randX[Math.floor(Math.random() * randX.length)];
+
+    return gemX;
+}
+var randXtraY = function(){
+    var randY = [60, 145, 230];
+    var gemY = randY[Math.floor(Math.random() * randY.length)];
+
+    return gemY;
+}
+
+
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var player = new Player();
+
+var player = new Player(202, 400);
 var allEnemies = [];
 
+// Place all gem objects in an array called gems
+var gems = [];
+
+
+//Creates our enemies at each possible x, y coordinate
 allEnemies[0]= new Enemy(0, 60);
 allEnemies[1] = new Enemy(0, 145);
 allEnemies[2] = new Enemy(0, 230);
 
+//Gem generation method(easer to instantiate gems objects through a loop than individual declaration)
+//Variable g stands for gems
+var populateGems = function(){
+  for(var g = 0; g < 2; g++){
+    gems[g] = new Gems();
+  }
+}
+
+populateGems();
 //Sets the individual speed of our enemies
 allEnemies[0].speed = 300;
 allEnemies[1].speed = 600;
