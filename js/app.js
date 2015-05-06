@@ -115,7 +115,7 @@ var Player = function(x, y){
     this.height = 171;
     this.sprite = 'images/char-boy.png';
 
-}
+};
 
 Player.prototype.update = function(){
 
@@ -170,7 +170,7 @@ var Gems = function(x, y){
     var gem = randGem[Math.floor(Math.random() * randGem.length)];
 
     this.sprite = gem;
-}
+};
 
 
 Gems.prototype.render = function(){
@@ -188,13 +188,13 @@ var randXtraX = function(){
     var gemX = randX[Math.floor(Math.random() * randX.length)];
 
     return gemX;
-}
+};
 var randXtraY = function(){
     var randY = [60, 145, 230];
     var gemY = randY[Math.floor(Math.random() * randY.length)];
 
     return gemY;
-}
+};
 
 
 
@@ -220,7 +220,7 @@ var populateGems = function(){
   for(var g = 0; g < 2; g++){
     gems[g] = new Gems();
   }
-}
+};
 
 populateGems();
 //Sets the individual speed of our enemies
