@@ -9,7 +9,7 @@ var Enemy = function(x, y) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-}
+};
 
 //Collision handling is done here
 var checkCollisions = function(){
@@ -65,7 +65,7 @@ var checkCollisions = function(){
       }
     }
 
-}
+};
 
 
 //Reset the game
@@ -99,12 +99,12 @@ Enemy.prototype.update = function(dt) {
 
       }
     }
-}
+};
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 var Player = function(x, y){
 
@@ -124,12 +124,12 @@ Player.prototype.update = function(){
     this.y = this.y;
 
 
-}
+};
 
 //Draw the player on the screen
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -156,7 +156,7 @@ Player.prototype.handleInput = function(keys){
         break;
 
     }
-}
+};
 
 //Gems class
 
@@ -175,13 +175,13 @@ var Gems = function(x, y){
 
 Gems.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 Gems.prototype.update = function(){
     this.x = this.x;
     this.y = this.y;
 
-}
+};
 
 var randXtraX = function(){
     var randX = [2, 102, 202, 302, 402];
